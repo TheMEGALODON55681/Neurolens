@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.5"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="92" fill="none" stroke="url(#brainGrad)" stroke-width="3" opacity="0.4"/>
+
+  <!-- Brain silhouette -->
+  <g transform="translate(100,100)" filter="url(#glow)">
+    <!-- Left hemisphere -->
+    <path d="M -42,-10
+             C -52,-30, -32,-50, -10,-46
+             C -6,-56, 6,-56, 10,-46
+             C 32,-50, 52,-30, 42,-10
+             C 52,5, 48,28, 28,38
+             C 18,48, 2,46, 0,40
+             C -2,46, -18,48, -28,38
+             C -48,28, -52,5, -42,-10 Z"
+          fill="url(#brainGrad)" opacity="0.85"/>
+
+    <!-- Central fissure -->
+    <line x1="0" y1="-46" x2="0" y2="40" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Gyri details (curves on the brain surface) -->
+    <path d="M -32,-20 C -22,-26, -14,-22, -10,-14" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+    <path d="M -32,0 C -22,-6, -14,-2, -10,6" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+    <path d="M -28,18 C -18,12, -12,16, -8,24" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+
+    <path d="M 32,-20 C 22,-26, 14,-22, 10,-14" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+    <path d="M 32,0 C 22,-6, 14,-2, 10,6" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+    <path d="M 28,18 C 18,12, 12,16, 8,24" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+  </g>
+
+  <!-- Lens / scan overlay -->
+  <g transform="translate(100,100)">
+    <circle cx="20" cy="20" r="32" fill="none" stroke="url(#lensGrad)" stroke-width="3.5"/>
+    <circle cx="20" cy="20" r="26" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.7"/>
+    <!-- Lens handle -->
+    <line x1="44" y1="44" x2="62" y2="62" stroke="url(#lensGrad)" stroke-width="5" stroke-linecap="round"/>
+    <!-- Crosshair inside lens -->
+    <line x1="6" y1="20" x2="34" y2="20" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+    <line x1="20" y1="6" x2="20" y2="34" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+  </g>
+</svg>

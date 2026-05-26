@@ -1,0 +1,72 @@
+# ============================================================
+# NeuroLens — .gitignore
+# ============================================================
+
+# -------- Secrets --------
+*.env
+.env
+.env.local
+secrets.toml
+
+# -------- Trained model weights (too large for git) --------
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# -------- Datasets / raw data --------
+data/
+raw/
+processed/
+*.mat
+
+# -------- Python --------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+pip-wheel-metadata/
+
+# -------- Virtual environments --------
+venv/
+.venv/
+env/
+ENV/
+
+# -------- IDE / Editor --------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# -------- OS --------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------- Jupyter --------
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# -------- Caches --------
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -------- Local runtime --------
+logs/
+runs/
+wandb/
+mlruns/
+*.log
+
+# -------- Gradio --------
+gradio_cached_examples/
+flagged/

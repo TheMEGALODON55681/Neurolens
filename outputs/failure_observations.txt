@@ -1,0 +1,85 @@
+Day 7 — Failure Analysis Observations
+============================================================
+Project: Brain Tumor MRI Classification
+Author: Tanishq Arya
+Model: EfficientNet-B3 with patient-level splitting
+Test set: 687 images, 34 errors total
+============================================================
+
+## Meningioma Failure Pattern
+Visual inspection of all 20 meningioma failures revealed a clear texture-based pattern. The 12 meningiomas misclassified as glioma showed a distinctive feature absent from most correctly-classified meningiomas in the dataset: black patches inside the tumor region, creating a heterogeneous internal appearance.
+
+Most correctly-classified meningiomas in this dataset present as relatively uniform white blobs — a hallmark appearance for this tumor type. The misclassified cases broke this pattern by displaying internal heterogeneity (black patches within otherwise white tumor regions), which is texturally more consistent with how gliomas typically appear on T1-weighted contrast-enhanced MRI.
+
+No clear location bias was observed in these failures — the tumors were medium to large in size and appeared throughout various brain regions. This suggests the model is correctly using internal tumor texture as a primary discriminator, but a subset of meningiomas (perhaps representing atypical or higher-grade variants) genuinely deviate from the canonical "uniform white blob" appearance and lie closer to the glioma feature distribution.
+
+The 8 meningiomas misclassified as pituitary showed a different pattern: they were predominantly located in the lower-middle brain region, which is the same anatomical area where pituitary tumors normally occur. Tumor sizes varied (medium to large), ruling out size as the primary confounder. Location appears to be the driving factor here — the model has learned an anatomical prior associating lower-central masses with pituitary tumors, and meningiomas in that location are confused with pituitary regardless of their other features.
+
+Notably, zero meningiomas were misclassified as no-tumor. The model never failed to detect that a tumor was present; the failures are exclusively about tumor subtype identification.
+
+------------------------------------------------------------
+
+## High Confidence Failure Pattern
+The 10 high-confidence wrong predictions (>90% model confidence) showed a striking symmetric pattern: they split exactly 5-5 between two specific confusion directions, with no high-confidence errors involving the pituitary class as the true label.
+
+- 5 true-meningioma cases with high confidence: 4 of 5 predicted as pituitary
+- 5 true-glioma cases with high confidence: 4 of 5 predicted as meningioma
+
+Visual examination of these 10 cases showed that the images appear genuinely visually ambiguous rather than obvious failures. Even to a non-radiologist eye, the tumors in question could plausibly belong to the predicted class — they do not look like clear-cut examples of their true class.
+
+Additionally, several of these high-confidence-wrong images showed unusual image quality characteristics:
+- Darker-than-typical brightness across the whole slice
+- Unusual contrast distributions
+- Subtle artifacts that may have shifted the model's feature distribution interpretation
+
+This combination — visual ambiguity plus image quality variation — produces the most dangerous failure mode for clinical applications: the model expresses high confidence in cases where it should be uncertain. Two implications follow:
+
+1. The model's confidence calibration is imperfect at the high-confidence tail — a 90%+ confidence score is not a guarantee of correctness when image quality deviates from training distribution.
+
+2. In a deployment scenario, image quality screening should be performed alongside the classifier, with low-quality or out-of-distribution images flagged for additional human review regardless of model confidence.
+
+The complete absence of high-confidence errors with true-class pituitary or no-tumor reinforces that the difficult discrimination boundary lies specifically between meningioma and the other two tumor types, not in detecting tumor presence.
+
+------------------------------------------------------------
+
+## Calibration Observations
+The model shows generally well-behaved confidence calibration with one notable caveat.
+
+Aggregate confidence separation between correct and wrong predictions is clean:
+- Average confidence on correct predictions: 98.3%
+- Average confidence on wrong predictions: 76.3%
+- A 22-percentage-point gap that allows confidence to function as a useful triage signal
+
+The calibration curve (mean predicted confidence vs actual accuracy across confidence bins) showed acceptable alignment with the perfect-calibration diagonal in mid-range confidence bins (60-85%). The model is neither systematically overconfident nor underconfident at moderate confidence levels.
+
+However, the 10 high-confidence-wrong predictions described above represent a calibration failure at the upper tail. The model achieves 95% prediction accuracy overall, but when restricted to predictions with >90% confidence, accuracy is approximately 98.5% (10 errors out of ~620 high-confidence predictions). This is good but not perfect — a fully-calibrated model with 90%+ confidence should be wrong less than 10% of the time, which it is, but the residual errors at high confidence are concentrated in the meningioma-glioma-pituitary discrimination axis.
+
+For deployment, this suggests:
+- Confidence > 95% is a strong signal for trustworthy predictions on no-tumor and pituitary cases.
+- Confidence in the 90-95% range warrants review when the predicted class is meningioma or glioma, given the documented confusion pattern.
+- A calibration-aware decision threshold (e.g., flag for review if confidence < 90% OR if predicted class is meningioma/glioma at <95% confidence) would provide better clinical safety than a uniform threshold.
+
+------------------------------------------------------------
+
+## Overall Error Pattern
+The single most important insight from this analysis is that the model's errors are not random — they reflect specific, interpretable confusion patterns rooted in genuine visual similarities between tumor types on single-modality T1-weighted MRI.
+
+Three primary error mechanisms were identified:
+
+1. **Texture-based confusion (meningioma -> glioma):** Atypical meningiomas with heterogeneous internal texture (black patches within white tumor regions) are misclassified as glioma. This is consistent with the well-known clinical fact that some meningioma variants present with non-canonical features and can be radiologically difficult to distinguish from glioma without additional MRI sequences.
+
+2. **Location-based confusion (meningioma -> pituitary):** Meningiomas in the lower-middle brain region are misclassified as pituitary. The model has correctly learned the strong anatomical prior linking that location to pituitary tumors, but meningiomas in that location violate this prior.
+
+3. **Image-quality compounding effect (high-confidence errors):** Images with non-standard brightness or contrast appear to shift the model's interpretation toward the wrong class with high confidence. Image quality preprocessing or quality-based triage would address this.
+
+The model perfectly identifies the most clinically critical distinction (tumor vs no-tumor: 100% recall on both glioma and meningioma being identified as some kind of tumor; 100% recall on no-tumor being identified as no-tumor). The failures are confined to tumor subtype discrimination — a meaningful but secondary clinical task.
+
+The implication for future work is clear: improvements should target the meningioma feature distribution specifically. The most promising directions are:
+- Multi-modal MRI (T2, FLAIR, T1ce in addition to T1) which directly addresses the texture-based confusion by providing tissue-property information not visible on T1 alone.
+- Targeted augmentation or oversampling of meningioma minority cases with heterogeneous texture.
+- Image quality screening as a deployment-time triage step.
+
+This pattern of error analysis — moving from "the model has X% accuracy" to "the model fails in these specific ways for these specific reasons" — is what makes the difference between a project that reports a number and a project that demonstrates understanding of the system being built.
+
+------------------------------------------------------------
+

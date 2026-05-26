@@ -1,0 +1,100 @@
+# Day 9 — Gradio Demo Test Notes
+
+Author: Tanishq Arya
+Test date: Day 9 of project
+Environment: Colab T4 GPU, Gradio 5.50.0, public share URL
+Tested on: Desktop browser + mobile browser
+
+## Performance and stability
+
+- Approximate time from Submit click to results: 4-5 seconds (Colab GPU)
+- No errors or crashes observed during the full testing session
+- App rendered correctly on both desktop and mobile browsers
+- Upload via file picker: working
+- Upload via clipboard paste: working
+- Public share URL: stable throughout the testing session
+
+## Per-example results — correct predictions
+
+### Examples 1 and 2 (glioma)
+- Both predictions matched the true class at 100% confidence.
+- Grad-CAM heatmap: spread around the center of the brain in both cases.
+- Observation: I could not visually confirm whether the tumor was exactly
+  in the highlighted region; the heatmap was less tightly localized than
+  for some other classes. Glioma tumors are often heterogeneous and can
+  appear in central regions, so this is plausible but warrants closer
+  inspection in a clinical setting.
+
+### Examples 3 and 4 (meningioma)
+- Both predictions matched the true class at 100% confidence.
+- Grad-CAM heatmap: lands directly on the tumor in both cases.
+- This is the cleanest result of the test — the model is clearly using
+  the tumor region itself as its evidence for meningioma classification.
+
+### Examples 5 and 6 (notumor)
+- Both predictions matched the true class at 100% confidence.
+- Grad-CAM heatmap: spread across the center of the brain in both cases.
+- This is expected behavior for the notumor class. Without a tumor to
+  attend to, the model relies on broader anatomical context. The diffuse
+  central attention pattern is consistent across both examples.
+
+### Examples 7 and 8 (pituitary)
+- Both predictions matched the true class at 100% confidence.
+- Example 8: heatmap landed correctly on the tumor.
+- Example 7: heatmap was unusually small in size, making it hard to
+  visually confirm whether it covered the tumor accurately.
+- Note: the small heatmap on example 7 suggests the model may be making
+  the prediction from a very localized feature set. This is not
+  necessarily wrong but is worth noting as a behavior pattern.
+
+## Per-example results — failure cases
+
+### Example 9 (true: meningioma, predicted: glioma)
+- Prediction: GLIOMA with 74% confidence, meningioma 26%
+- Grad-CAM heatmap: correctly covered the tumor region
+- Key insight: the model was looking at the right place but pattern-matched
+  to the wrong class. This is a feature-learning failure, NOT an attention
+  failure. The tumor's visual texture genuinely resembles glioma features
+  enough to fool the model, but the 26% probability for meningioma shows
+  the model retained some uncertainty.
+
+### Example 10 (true: glioma, predicted: meningioma)
+- Prediction: MENINGIOMA with 89% confidence, glioma 11%
+- Grad-CAM heatmap: did NOT cover the tumor at all
+- Key insight: this is the more concerning failure mode — high confidence
+  combined with attention in the wrong location. The model made a confident
+  decision based on features outside the actual tumor region. This is the
+  classic signature of either shortcut learning or distractor features
+  in the image periphery.
+
+## Summary of findings
+
+1. The model achieves 100% confidence on all 8 correct examples, with
+   confidence calibration that correctly drops to 74-89% on failure cases.
+
+2. Grad-CAM localization quality varies by class:
+   - Strongest: meningioma (heatmap on tumor)
+   - Moderate: pituitary (one clean, one with unusually small heatmap)
+   - Diffuse: glioma and notumor (center-spread attention pattern)
+
+3. Two distinct failure modes observed in the test examples:
+   - Example 9: correct attention, wrong classification (texture confusion)
+   - Example 10: wrong attention, wrong classification (location-based
+     distractor)
+
+4. App stability and UX are production-ready: 4-5 second latency,
+   no errors, works on desktop and mobile, multiple upload methods.
+
+## Implications for the README
+
+- The Grad-CAM section should specifically note that meningioma cases
+  show the cleanest tumor localization, which is reassuring given that
+  meningioma is also the hardest class for the model to classify.
+
+- The glioma center-spread pattern is worth documenting honestly — it
+  suggests the model may be using context as much as tumor features
+  for glioma classification.
+
+- Example 10's wrong-attention failure should be acknowledged as a known
+  limitation worth investigating, possibly via image-quality screening
+  or attention-regularization techniques in v2.

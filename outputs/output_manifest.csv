@@ -1,0 +1,22 @@
+filename,day_created,description,readme_section,exists,size_kb
+class_distribution.png,2,Bar chart of image counts per class across combined dataset,Dataset — Class Distribution,True,30.451171875
+image_size_distribution.png,2,Scatter plot of image dimensions by source (Figshare vs Br35H),Dataset — Image Sizes,True,41.93359375
+slices_per_patient.png,2,Histogram of slices per patient — motivates patient-level splitting,Methodology — Patient-Level Splitting,True,39.69921875
+slices_per_patient_by_class.png,2,Per-class slices per patient distribution,Methodology — Patient-Level Splitting,True,34.8642578125
+sample_images.png,2,4x4 grid of sample images from each class,Dataset — Sample Images,True,1390.1826171875
+split_proportions.png,3,Class proportions across train/val/test splits,Methodology — Data Splitting,True,31.5302734375
+processed_image_grid.png,3,Visual verification of preprocessed images,Methodology — Preprocessing,True,1402.7060546875
+augmentation_examples.png,4,Original vs 7 augmented versions of one image,Methodology — Data Augmentation,True,444.6806640625
+stage1_training_curves.png,4,Stage 1 loss and accuracy curves (frozen backbone),Results — Training,True,72.306640625
+stage2_training_curves.png,5,"Stage 2 loss, accuracy, and LR curves (full fine-tuning)",Results — Training,True,124.021484375
+combined_training_curves.png,5,Stage 1 + Stage 2 combined training journey,Results — Training,True,110.1748046875
+confusion_matrix.png,6,Standard (single-pass) confusion matrix — raw + normalized,Results — Evaluation,True,97.826171875
+confusion_matrix_tta.png,6,TTA confusion matrix — raw + normalized,Results — Evaluation,True,96.3720703125
+roc_curves.png,6,ROC curves and AUC scores per class (standard),Results — Evaluation,True,114.62109375
+roc_curves_tta.png,6,ROC curves and AUC scores per class (TTA),Results — Evaluation,True,108.7607421875
+failure_cases.png,6,Most and least confident wrong predictions,Results — Failure Analysis,True,721.361328125
+per_class_performance.png,7,Comprehensive per-class metric comparison chart,Results — Evaluation,True,118.251953125
+meningioma_failures.png,7,All 20 meningioma failures with border color by prediction,Results — Failure Analysis,True,1633.3427734375
+high_confidence_failures.png,7,All 10 high-confidence (>90%) wrong predictions,Results — Failure Analysis,True,685.828125
+calibration_analysis.png,7,Calibration curve and confidence distribution,Results — Calibration,True,113.478515625
+error_patterns.png,7,Error transition heatmap and per-class error rates,Results — Failure Analysis,True,100.21484375

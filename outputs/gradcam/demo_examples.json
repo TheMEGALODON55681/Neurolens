@@ -1,0 +1,62 @@
+[
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004010_glioma.png",
+    "true_label": "glioma",
+    "category": "correct_high_conf",
+    "description": "Correct glioma (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004022_glioma.png",
+    "true_label": "glioma",
+    "category": "correct_high_conf",
+    "description": "Correct glioma (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/003973_meningioma.png",
+    "true_label": "meningioma",
+    "category": "correct_high_conf",
+    "description": "Correct meningioma (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004258_meningioma.png",
+    "true_label": "meningioma",
+    "category": "correct_high_conf",
+    "description": "Correct meningioma (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004351_notumor.png",
+    "true_label": "notumor",
+    "category": "correct_high_conf",
+    "description": "Correct notumor (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004356_notumor.png",
+    "true_label": "notumor",
+    "category": "correct_high_conf",
+    "description": "Correct notumor (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/003877_pituitary.png",
+    "true_label": "pituitary",
+    "category": "correct_high_conf",
+    "description": "Correct pituitary (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/003916_pituitary.png",
+    "true_label": "pituitary",
+    "category": "correct_high_conf",
+    "description": "Correct pituitary (high confidence)"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004142_meningioma.png",
+    "true_label": "meningioma",
+    "category": "failure_ambiguous",
+    "description": "Failure: meningioma \u2192 predicted glioma"
+  },
+  {
+    "image_path": "/content/drive/MyDrive/brain_tumor_project/processed_data/images/004317_glioma.png",
+    "true_label": "glioma",
+    "category": "failure_ambiguous",
+    "description": "Failure: glioma \u2192 predicted meningioma"
+  }
+]
