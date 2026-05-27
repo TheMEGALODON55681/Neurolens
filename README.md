@@ -5,7 +5,7 @@
 <h1 align="center">NeuroLens</h1>
 
 <p align="center">
-  <em>Honest, leakage-free brain MRI tumor classification with explainable predictions.</em>
+  <em>An honest brain MRI tumor classifier — built to expose the data leakage hiding in most public implementations.</em>
 </p>
 
 <p align="center">
@@ -19,30 +19,32 @@
 
 ---
 
-## Overview
+## At a glance
 
-**NeuroLens** is a 4-class brain MRI tumor classifier built on raw Figshare and Br35H data with **strict patient-level splitting**. It distinguishes between **glioma**, **meningioma**, **pituitary tumor**, and **no tumor**, and produces a **Grad-CAM attention map** for every prediction so the reasoning behind a classification is visible — not hidden behind a probability.
-
-The project deliberately targets an **honest** accuracy number rather than the inflated 96–99% numbers commonly reported on this dataset. By splitting at the patient level instead of the image level, NeuroLens eliminates the data leakage that quietly boosts most public implementations by 5–15 percentage points.
-
-| Metric | Value |
+| | |
 |---|---|
 | Test accuracy (TTA) | **95.05%** |
 | Test accuracy (single-pass) | 94.91% |
-| Macro F1 | 0.9364 |
 | Macro AUC-ROC | **0.9965** |
-| Test set size | 687 unseen patient images |
+| Macro F1 | 0.9364 |
+| Test set | 687 patient-level held-out images |
 | Patient leakage between splits | **0** (verified by set intersection) |
+
+▶ **Live demo:** [Try NeuroLens on Hugging Face Spaces →](https://huggingface.co/spaces/Megalodon55681/NeuroLens) *(may take a moment to wake up — free Spaces sleep when idle)*
 
 ---
 
-## Why this project is different
+## The problem nobody talks about
 
-Most public brain tumor classifiers report 96–99% test accuracy on the same dataset. **Those numbers are inflated by data leakage.**
+Pick almost any brain-tumor classifier notebook published online and you'll see test accuracies in the **96–99% range**. The numbers are eye-catching, the confusion matrices are tidy, the conclusions sound impressive.
 
-The Figshare source contains 3,064 MRI slices from only **233 unique patients** — roughly 13 slices per patient. A naive random split at the image level scatters slices from the same patient into both the training and test sets. The model memorises patient-specific anatomy (skull shape, tissue contrast, scanner artifacts) rather than learning generalisable tumor features. The headline accuracy looks great; the underlying learning is poor.
+**They are also wrong.**
 
-NeuroLens implements **patient-level splitting**, validated by explicit set-intersection checks:
+The Figshare dataset — the most common training source for this task — contains 3,064 MRI slices from only **233 unique patients**. That's roughly 13 slices per patient. When a random split assigns images to training and test sets at the *image* level, slices from the same patient end up on both sides. The model learns to recognise a specific patient's skull shape, tissue contrast, and scanner signature rather than the tumor itself. At test time it sees a familiar patient, and the prediction looks easy — because it *is* easy. The model is doing identity recognition, not tumor classification.
+
+The accuracy on truly unseen patients is **5–15 percentage points lower** than these notebooks report.
+
+NeuroLens was built to make that gap explicit. The training pipeline splits the dataset at the **patient level**, not the image level — and verifies the absence of leakage with explicit set-intersection checks:
 
 ```text
 Train ∩ Val  = 0 patients
@@ -50,21 +52,181 @@ Train ∩ Test = 0 patients
 Val   ∩ Test = 0 patients
 ```
 
-The 95.05% accuracy reported here is computed on patients the model has genuinely never encountered — a number that is **lower** than what naive implementations claim, but is the one that actually reflects real-world generalisation.
+The 95.05% accuracy reported here is the number that survives that discipline. It's lower than what the inflated notebooks claim. It's also the only one that means anything outside of a Kaggle scoreboard.
 
 ---
 
-## Live demo
+## Approach
 
-▶ **Try NeuroLens on Hugging Face Spaces:** [Launch demo →](https://huggingface.co/spaces/Megalodon55681/NeuroLens)
+### Architecture
 
-> *Hugging Face Spaces may take a few seconds to warm up on first request — the container sleeps when idle.*
+| Component | Choice |
+|---|---|
+| Backbone | EfficientNet-B3 (`timm`, ImageNet pretrained) |
+| Head | 4-class linear classifier replacing the original 1000-class head |
+| Parameters | ~10.7 M |
+| Input resolution | 224 × 224 |
+| Compute | Tesla T4 (Google Colab) |
+
+### Splitting strategy
+
+The split uses `StratifiedGroupKFold` from scikit-learn, which preserves **class balance and patient grouping simultaneously** — a property a plain `train_test_split` cannot give you. The pipeline carves out 15% for the test set first (`n_splits=7`), then divides the remainder into a training set and a 15% validation set. The final ratios land at **71.6% / 13.3% / 15.1%**.
+
+A separate validation step at the end of the split explicitly computes the patient-ID intersection between every pair of splits. All three intersections come back empty. The split is logged and reproducible.
+
+<p align="center">
+  <img src="outputs/split_proportions.png" alt="Split proportions" width="600"/>
+</p>
+
+### Preprocessing
+
+Each MRI slice is preprocessed once and cached as a PNG:
+
+* Per-image min-max normalisation, to absorb the intensity variation that comes from different scanners.
+* Single grayscale channel replicated three times, so the image fits the input shape an ImageNet-pretrained backbone expects.
+* Stored as `uint8` PNG, indexed by row number and class label.
+
+Resizing to 224 × 224 happens inside the DataLoader rather than during preprocessing. That decouples input resolution from the disk cache and makes input-size experiments cheap.
+
+### Two-stage transfer learning
+
+**Stage 1 — Head training (5 epochs).**
+The backbone is frozen and only the classifier head trains. The head has roughly 6,148 parameters, so this stage is fast and stable. AdamW with learning rate 1e-3. Stage-1 validation accuracy reaches 81.74%.
+
+**Stage 2 — Full fine-tuning (17 epochs, early-stopped).**
+The entire network unfreezes. Differential learning rates apply different scales to the backbone (5e-5) and the head (1e-4) so the pretrained features aren't overwritten too aggressively. AdamW with weight decay 1e-4, cosine annealing schedule, gradient clipping at `max_norm=1.0`. Early stopping with patience 8 stops the run before overfitting takes hold. Stage-2 validation accuracy reaches 94.57%.
+
+<p align="center">
+  <img src="outputs/combined_training_curves.png" alt="Training curves" width="700"/>
+</p>
+
+### Augmentation
+
+Training-time augmentation is deliberately mild — the task is medical imaging, not photographic style transfer.
+
+* Random rotation up to ±15°.
+* Small random translation (±5%) and scale (95–105%).
+* Colour jitter — brightness ±20%, contrast ±20%.
+* **No horizontal flip.** The human brain is anatomically asymmetric. Flipping a brain MRI corrupts the very lateral information the model needs.
+
+<p align="center">
+  <img src="outputs/augmentation_examples.png" alt="Augmentation examples" width="700"/>
+</p>
+
+### Loss
+
+Weighted cross-entropy with inverse-frequency class weights. Meningioma — the smallest class — receives the largest weight. This partially compensates for the class imbalance but does not, by itself, fix the underlying scarcity of unique meningioma patients (see the *Limitations* section below).
+
+### Test-time augmentation
+
+At inference, each test image is forwarded through the model five times with mild augmentations (rotation ±5°, brightness/contrast shifts) and the softmax probabilities are averaged before `argmax`. The contribution is small but consistent — **+0.14% accuracy** over the single-pass baseline.
+
+---
+
+## Results
+
+### Headline metrics
+
+| Metric | Value |
+|---|---|
+| Test accuracy (TTA) | **95.05%** |
+| Test accuracy (single-pass) | 94.91% |
+| Macro AUC-ROC | **0.9965** |
+| Macro F1 | 0.9364 |
+| Test images | 687 (patient-level held-out) |
+
+### Per-class performance
+
+<p align="center">
+  <img src="outputs/per_class_performance.png" alt="Per-class performance" width="700"/>
+</p>
+
+<p align="center">
+  <img src="outputs/confusion_matrix_tta.png" alt="Confusion matrix (TTA)" width="500"/>
+</p>
+
+<p align="center">
+  <img src="outputs/roc_curves_tta.png" alt="ROC curves (TTA)" width="600"/>
+</p>
+
+### The honest weakness — meningioma
+
+Meningioma is the model's hardest class. Of 34 total test errors, **20 are meningioma misclassifications**, broken down as:
+
+* **Predicted as glioma (12 cases).** The most common confusion. Both tumor types can present as a hyperintense mass on T1-weighted MRI; without multi-modal input the visual cues genuinely overlap.
+* **Predicted as pituitary (8 cases).** These meningiomas were predominantly located in the lower-middle brain region — the same anatomical area where pituitary tumors occur. Tumor size varied across cases, ruling size out as the primary confounder; **location** appears to be the driving factor.
+
+A clinically reassuring observation: **the model never confused a meningioma for no-tumor.** The error mode is tumor *subtype* confusion, not tumor *presence*.
+
+<p align="center">
+  <img src="outputs/meningioma_failures.png" alt="Meningioma failure cases" width="700"/>
+</p>
+
+### High-confidence failures
+
+Ten of the 34 errors were made with >90% confidence — split exactly 5–5 between two confusion pairs:
+
+* 4 of 5 high-confidence meningioma errors → predicted as pituitary.
+* 4 of 5 high-confidence glioma errors → predicted as meningioma.
+* 0 high-confidence errors involved the pituitary class.
+
+Visual inspection suggests these images are **genuinely ambiguous**, not obvious failures. Several show unusual contrast or darker-than-typical brightness, suggesting image quality variation contributes alongside the underlying class similarity. In a clinical setting, these cases would warrant secondary review regardless of model confidence.
+
+<p align="center">
+  <img src="outputs/high_confidence_failures.png" alt="High-confidence failures" width="700"/>
+</p>
+
+### Calibration
+
+The model's confidence scores are well-separated between correct and incorrect predictions:
+
+| | Mean confidence |
+|---|---|
+| Correct predictions | 98.3% |
+| Incorrect predictions | 76.3% |
+| Separation | ~22 percentage points |
+
+This means confidence can serve as a reliable triage signal in deployment — low-confidence predictions can be automatically flagged for human review.
+
+<p align="center">
+  <img src="outputs/calibration_analysis.png" alt="Calibration analysis" width="700"/>
+</p>
+
+---
+
+## Interpretability — Grad-CAM
+
+Before trusting an accuracy number, you should know **what the model is actually looking at**. Otherwise the number could come from any feature — including ones you'd never want, like a scanner watermark or a positioning artefact.
+
+Grad-CAM (Gradient-weighted Class Activation Mapping) was applied across the entire test set to produce heatmaps showing which regions of each image most influenced the prediction.
+
+<p align="center">
+  <img src="outputs/gradcam_overview.png" alt="Grad-CAM overview" width="800"/>
+</p>
+
+### Class-specific localisation patterns
+
+The localisation quality varies systematically by class:
+
+* **Meningioma — strongest localisation.** Heatmaps land squarely on the tumor region. This is striking because meningioma is also the model's hardest class — even when it misclassifies, it is generally looking at the right place. The problem is feature interpretation, not attention.
+* **Pituitary — tight, focal heatmaps.** Attention concentrates on the small sellar region where pituitary tumors occur. The compact footprint reflects the small anatomical structure, not a defect.
+* **Glioma and no-tumor — diffuse central attention.** Heatmaps spread across the central brain rather than tightly localising. For no-tumor this is expected (there's nothing specific to localise on); for glioma it suggests the model is using broader contextual features alongside the lesion itself.
+
+### Two failure modes revealed by attention
+
+Grad-CAM on misclassified cases exposed that the model fails in two fundamentally different ways, and the distinction matters because the fixes are different:
+
+1. **Right attention, wrong class.** Some meningioma → glioma errors have heatmaps that correctly cover the tumor, but the model still picks the wrong class. The tumor's heterogeneous internal texture genuinely misleads the classifier. This is a **feature-learning limitation** — the fix is richer features (e.g., multi-modal MRI), not better attention.
+
+2. **Wrong attention, wrong class.** Some glioma → meningioma errors have heatmaps that don't cover the tumor at all — the model made a confident decision based on regions outside the lesion. This points to **distractor features or image-quality effects** — the fix is attention regularisation or input-quality screening.
+
+A single accuracy number flattens both of these into the same statistic. Grad-CAM separates them.
 
 ---
 
 ## Dataset
 
-NeuroLens combines two raw public sources rather than relying on a pre-aggregated dataset, because the aggregated versions strip the patient identifiers needed for honest splitting.
+NeuroLens combines two raw public sources rather than relying on a pre-aggregated dataset, because the aggregated versions strip the patient identifiers that make honest splitting possible.
 
 | Source | Classes contributed | Images | Patients |
 |---|---|---|---|
@@ -85,220 +247,104 @@ NeuroLens combines two raw public sources rather than relying on a pre-aggregate
   <img src="outputs/class_distribution.png" alt="Class distribution" width="600"/>
 </p>
 
-### Why combine the sources manually?
+### Why combine the sources manually
 
-Figshare provides three tumor types with patient IDs, which is essential for patient-level splitting. Br35H provides healthy controls (no-tumor) that Figshare lacks. Aggregated datasets that combine these sources strip the patient IDs in the process, making proper splitting impossible. Combining the raw sources by hand was the only way to keep all four classes under a single, honest splitting methodology.
+Figshare provides three tumor types **with patient IDs** — the essential ingredient for patient-level splitting. Br35H provides healthy controls (no-tumor images) that Figshare doesn't include. Most aggregated datasets that combine these sources strip the patient IDs in the process, which silently makes proper splitting impossible. Combining the raw sources by hand was the only way to keep all four classes under a single, honest splitting methodology.
 
-**Documented limitation:** Br35H does not provide patient IDs. Each Br35H image is treated as an independent pseudo-patient, so the no-tumor split is effectively image-level while the tumor splits are patient-level. This asymmetry is disclosed openly here rather than buried.
+**A documented asymmetry:** Br35H does not provide patient IDs, so each Br35H image is treated as an independent pseudo-patient. The no-tumor split is therefore effectively image-level while the three tumor splits are patient-level. This asymmetry is disclosed openly rather than buried — it would be fully resolved only by access to a dataset with patient-level healthy controls.
 
-### Slices per patient — motivating the split strategy
+### Slices per patient — why the splitting strategy matters
 
 <p align="center">
   <img src="outputs/slices_per_patient.png" alt="Slices per patient" width="600"/>
 </p>
 
-Many Figshare patients contribute 15–25 slices. Without patient-level grouping, those slices would scatter across splits and the model would silently learn patient identities instead of tumor features.
+Many Figshare patients contribute 15–25 slices each. Without patient-level grouping, those slices scatter across train, validation, and test sets — and the model silently learns patient identities instead of tumor features. The shape of this distribution is the entire reason patient-level splitting is non-negotiable for this dataset.
 
 ---
 
-## Methodology
+## Limitations & honest trade-offs
 
-### Splitting strategy
+1. **Single MRI modality.** Only T1-weighted contrast-enhanced MRI was used. Clinical practice uses multiple modalities (T1, T2, FLAIR, T1ce) and the meningioma–glioma confusion that drives most of NeuroLens's errors is precisely the kind of error that multi-modal input typically resolves — different sequences highlight different tissue properties.
 
-* `StratifiedGroupKFold` from scikit-learn — preserves class balance **and** patient grouping.
-* Two-stage split: carve out 15% test (`n_splits=7`), then split the remainder into train + 15% val.
-* Final ratios: **71.6% train / 13.3% val / 15.1% test**.
-* Zero patient leakage verified via explicit set intersections.
-* The original Cheng et al. cross-validation folds (`cvind.mat`) were inspected but not used; an independent patient-level split was implemented so all four classes — including Br35H's no-tumor — fall under a single methodology.
+2. **Meningioma class weakness.** The 19.6% error rate on meningioma is the dominant failure mode. Class-weighted loss addressed the *sample* imbalance partially, but the underlying constraint is the small number of unique meningioma *patients* in the dataset — a problem class-weighted loss cannot fix.
 
-<p align="center">
-  <img src="outputs/split_proportions.png" alt="Split proportions" width="600"/>
-</p>
+3. **2D slice-based classification.** Each prediction operates on a single slice in isolation. Clinical radiologists interpret full 3D volumes; slice-based models necessarily miss spatial context that adjacent slices would provide.
 
-### Preprocessing
+4. **Br35H lacks patient IDs.** No-tumor images are split image-level while tumor images are split patient-level — a known and documented asymmetry, not a resolved one.
 
-Each image goes through a one-time preprocessing step saved as a PNG:
+5. **Limited geographic and scanner diversity.** The Figshare data was collected from two specific hospitals in China. Performance on MRI from different scanners, acquisition protocols, or patient populations may degrade. No cross-scanner validation was performed within this project.
 
-* Per-image min-max normalisation (handles MRI intensity variation across scanners).
-* Grayscale replicated to 3 channels (compatibility with ImageNet-pretrained backbones).
-* Stored as `uint8` PNG, indexed by row number and class label.
-
-Resizing to 224 × 224 happens inside the DataLoader rather than during preprocessing, so the input resolution can be experimented with without regenerating the entire image cache.
-
-### Model
-
-| Property | Value |
-|---|---|
-| Backbone | EfficientNet-B3 (`timm`) |
-| Pretrained on | ImageNet |
-| Classification head | 4-class linear layer (replaces original 1000-class head) |
-| Total parameters | ~10.7 M |
-
-### Two-stage transfer learning
-
-**Stage 1 — Frozen backbone (5 epochs):**
-* Train only the classifier head (~6,148 parameters).
-* AdamW, learning rate 1e-3.
-* Result: validation accuracy 81.74%.
-
-**Stage 2 — Full fine-tuning (17 epochs, early-stopped):**
-* Unfreeze the entire network.
-* Differential learning rates: backbone 5e-5, head 1e-4.
-* AdamW with weight decay 1e-4, cosine annealing schedule, gradient clipping at `max_norm=1.0`.
-* Early stopping with patience 8.
-* Result: validation accuracy 94.57%.
-
-<p align="center">
-  <img src="outputs/combined_training_curves.png" alt="Training curves" width="700"/>
-</p>
-
-### Data augmentation (training only)
-
-* Random rotation up to ±15°.
-* Small random translation (±5%) and scale (95–105%).
-* Colour jitter (brightness ±20%, contrast ±20%).
-* **No horizontal flip** — brain MRI has anatomical asymmetry that flipping would corrupt.
-
-<p align="center">
-  <img src="outputs/augmentation_examples.png" alt="Augmentation examples" width="700"/>
-</p>
-
-### Loss function
-
-Weighted cross-entropy with inverse-frequency class weights, compensating for class imbalance. Meningioma — the smallest class — receives the largest weight.
-
-### Test-time augmentation (TTA)
-
-At inference, each test image is passed through the model five times with mild augmentations (rotation ±5°, small brightness/contrast shifts) and the softmax probabilities are averaged before `argmax`. TTA contributed a measurable but modest **+0.14%** accuracy improvement on top of the single-pass baseline.
-
----
-
-## Results
-
-### Headline numbers
-
-| Metric | Value |
-|---|---|
-| Test accuracy (TTA) | **95.05%** |
-| Test accuracy (single-pass) | 94.91% |
-| Macro AUC-ROC | **0.9965** |
-| Macro F1 | 0.9364 |
-| Test images | 687 (patient-level held-out) |
-
-### Per-class performance (TTA)
-
-<p align="center">
-  <img src="outputs/per_class_performance.png" alt="Per-class performance" width="700"/>
-</p>
-
-<p align="center">
-  <img src="outputs/confusion_matrix_tta.png" alt="Confusion matrix (TTA)" width="500"/>
-</p>
-
-<p align="center">
-  <img src="outputs/roc_curves_tta.png" alt="ROC curves (TTA)" width="600"/>
-</p>
-
-### The honest weakness — meningioma
-
-Meningioma is the model's hardest class. Of 34 total test errors, **20 are meningioma misclassifications**, broken down as:
-
-* **Predicted as glioma (12 cases):** The most common confusion. Both tumor types can present as a hyperintense mass on T1-weighted MRI; without multi-modal input the visual cues are genuinely overlapping.
-* **Predicted as pituitary (8 cases):** These meningiomas were predominantly located in the lower-middle brain region — the same anatomical area where pituitary tumors occur. Tumor size varied, ruling size out as the primary confounder; **location** appears to be the driving factor.
-
-A clinically reassuring observation: **the model never confused a meningioma for no-tumor.** The error mode is tumor *subtype* confusion, not tumor *presence*.
-
-<p align="center">
-  <img src="outputs/meningioma_failures.png" alt="Meningioma failure cases" width="700"/>
-</p>
-
-### High-confidence failures (the dangerous mode)
-
-Ten of the 34 errors were made with >90% confidence — split exactly 5–5 between two confusion pairs:
-
-* 4 of 5 high-confidence meningioma errors → predicted as pituitary.
-* 4 of 5 high-confidence glioma errors → predicted as meningioma.
-* 0 high-confidence errors involved the pituitary class.
-
-Visual inspection suggests these images are **genuinely ambiguous**, not obvious failures. Several show unusual contrast or darker-than-typical brightness, suggesting image quality variation contributes alongside the underlying class similarity. In a clinical setting these would warrant secondary review regardless of model confidence.
-
-<p align="center">
-  <img src="outputs/high_confidence_failures.png" alt="High-confidence failures" width="700"/>
-</p>
-
-### Calibration
-
-The model exhibits reasonable confidence calibration:
-
-* Mean confidence on **correct** predictions: 98.3%
-* Mean confidence on **incorrect** predictions: 76.3%
-* Clean ~22 percentage-point separation between right and wrong.
-
-This means confidence could serve as a reliable triage signal in deployment — low-confidence predictions can be routed to human review.
-
-<p align="center">
-  <img src="outputs/calibration_analysis.png" alt="Calibration analysis" width="700"/>
-</p>
-
----
-
-## Interpretability — Grad-CAM
-
-To verify that the model classifies based on genuine tumor features rather than dataset shortcuts (scanner artifacts, watermarks, positioning), **Grad-CAM** (Gradient-weighted Class Activation Mapping) was applied across the entire test set. Grad-CAM produces a heatmap highlighting the image regions that most influenced a prediction.
-
-<p align="center">
-  <img src="outputs/gradcam_overview.png" alt="Grad-CAM overview" width="800"/>
-</p>
-
-### What the heatmaps reveal
-
-Localisation quality varies systematically by class:
-
-* **Meningioma — strongest localisation.** Heatmaps land directly on the tumor region. This is notable because meningioma is also the model's hardest class — even when it misclassifies, it is generally looking at the right place.
-* **Pituitary — tight, focal heatmaps.** Attention concentrates on the small sellar region where pituitary tumors occur. The small footprint reflects the small anatomical structure, not a defect.
-* **Glioma and no-tumor — diffuse central attention.** Heatmaps spread across the central brain rather than tightly localising. For no-tumor this is expected; for glioma it suggests the model uses broader contextual features alongside the lesion itself.
-
-### Two distinct failure modes
-
-Grad-CAM on misclassified cases revealed that the model fails in two fundamentally different ways:
-
-1. **Correct attention, wrong class.** Some meningioma → glioma errors have heatmaps that correctly cover the tumor, but the model still picks the wrong class. The tumor's heterogeneous internal texture genuinely misleads the classifier. This is a feature-learning limitation, not an attention failure.
-
-2. **Wrong attention, wrong class.** Some glioma → meningioma errors have heatmaps that do not cover the tumor at all — the model made a confident decision based on regions outside the lesion. This points to distractor features or image-quality effects.
-
-This distinction matters because the two problems need different fixes:
-the first calls for **richer features** (e.g., multi-modal MRI);
-the second calls for **attention regularisation** or **input-quality screening**.
-
----
-
-## Limitations
-
-1. **Single MRI modality.** Only T1-weighted contrast-enhanced MRI was used. Clinical practice uses multiple modalities (T1, T2, FLAIR, T1ce). The meningioma–glioma confusion is precisely the kind of error that multi-modal input typically resolves, because different sequences highlight different tissue properties.
-
-2. **Meningioma class weakness.** 19.6% error rate on meningioma is the dominant failure mode. Class-weighted loss partially addressed the sample imbalance (708 meningioma vs 1,426 glioma training images) but did not eliminate it. The underlying constraint is the number of unique meningioma patients.
-
-3. **2D slice-based classification.** Each prediction is on a single slice in isolation. Clinical radiologists interpret 3D volumes. Slice-based models can miss spatial context.
-
-4. **Br35H lacks patient IDs.** No-tumor images are split image-level while tumor images are split patient-level — a known asymmetry, documented but not resolved.
-
-5. **Dataset distribution.** Figshare data was collected from two specific hospitals in China. Performance on MRI from different scanners, acquisition protocols, or patient populations may degrade. No cross-scanner validation was performed.
-
-6. **Not for clinical use.** This is a portfolio and research demonstration. It has not been validated in a clinical setting, has not been reviewed by radiologists, and **must not** be used for any medical decision-making.
+6. **Not for clinical use.** This is a portfolio and research demonstration. It has not been validated in any clinical setting, has not been reviewed by qualified radiologists, and **must not** be used for any medical decision-making.
 
 ---
 
 ## Roadmap (v2)
 
-Planned improvements being explored for a future release:
+Planned improvements under exploration for the next iteration:
 
-* **Multi-modal MRI** using BraTS (T1, T2, FLAIR, T1ce together). Most likely path to fixing the meningioma weakness.
-* **Focal loss or class-balanced sampler** as an alternative to weighted cross-entropy — targets hard-to-classify samples explicitly.
+* **Multi-modal MRI** using BraTS (T1, T2, FLAIR, T1ce together). The most likely path to closing the meningioma weakness.
+* **Monte Carlo Dropout** at inference time, to surface principled uncertainty estimates alongside point predictions.
+* **Focal loss or class-balanced sampler** as alternatives to weighted cross-entropy — explicitly targeting hard-to-classify samples.
 * **MixUp / CutMix augmentation** for minority-class robustness.
 * **3D model (3D ResNet or volumetric U-Net)** to use spatial context from neighbouring slices.
 * **k-fold cross-validation** for tighter accuracy confidence intervals.
-* **Monte Carlo Dropout** for principled uncertainty quantification at inference time.
 * **ONNX export + ONNX Runtime benchmarks** for faster, framework-independent deployment.
+
+---
+
+## Reproduce locally
+
+### 1. Clone
+
+```bash
+git clone https://github.com/TheMEGALODON55681/NeuroLens.git
+cd NeuroLens
+```
+
+### 2. Set up the environment
+
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\Activate.ps1
+# macOS / Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+The project was developed on Google Colab (PyTorch 2.x, Python 3.12, Tesla T4 GPU). A GPU is recommended for training but **not required for inference**.
+
+### 3. Get the data
+
+The raw datasets are not bundled with this repository. Download them from the original sources:
+
+* **Figshare Brain Tumor Dataset** — Cheng et al., 2017:
+  [https://figshare.com/articles/dataset/brain_tumor_dataset/1512427](https://figshare.com/articles/dataset/brain_tumor_dataset/1512427)
+* **Br35H Brain Tumor Detection** (no-tumor class) — Ahmed Hamada, 2020:
+  [https://www.kaggle.com/datasets/ahmedhamada0/brain-tumor-detection](https://www.kaggle.com/datasets/ahmedhamada0/brain-tumor-detection)
+
+Place the raw files following the directory structure expected at the top of the training notebook.
+
+### 4. Train
+
+Open `notebooks/brain_tumor_full_pipeline.ipynb` and run the sections in order. The notebook covers acquisition, preprocessing, patient-level splitting, training, evaluation, and Grad-CAM generation. Processed data is regenerated at runtime rather than downloaded.
+
+### 5. Run the demo without training
+
+To skip training, download the pretrained checkpoint:
+
+* Get `stage2_best.pt` from the Hugging Face Space (Files tab):
+  [https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main](https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main)
+* Place it in the project root, next to `app.py`.
+* Launch:
+
+  ```bash
+  python app.py
+  ```
+
+The Gradio interface will be available at `http://127.0.0.1:7860`.
 
 ---
 
@@ -321,28 +367,28 @@ Planned improvements being explored for a future release:
 ```text
 neurolens/
 │
-├── README.md                       Project overview (this file)
-├── LICENSE                         MIT license
-├── requirements.txt                Python dependencies
-├── .gitignore                      Excludes data and checkpoints
-├── app.py                          Gradio demo application
+├── README.md                         Project overview (this file)
+├── LICENSE                           MIT license
+├── requirements.txt                  Python dependencies
+├── .gitignore                        Excludes data and checkpoints
+├── app.py                            Gradio demo application
 │
 ├── assets/
-│   └── logo.svg                    Project logo
+│   └── logo.svg                      Project logo
 │
 ├── src/
 │   ├── __init__.py
-│   ├── model.py                    EfficientNet-B3 construction utilities
-│   ├── dataset.py                  Dataset class and image transforms
-│   └── inference.py                Prediction and Grad-CAM utilities
+│   ├── model.py                      EfficientNet-B3 construction utilities
+│   ├── dataset.py                    Dataset class and image transforms
+│   └── inference.py                  Prediction and Grad-CAM utilities
 │
 ├── notebooks/
 │   └── brain_tumor_full_pipeline.ipynb   End-to-end training notebook
 │
 ├── samples/
-│   └── README.md                   Curated example images for the demo
+│   └── README.md                     Curated example images for the demo
 │
-└── outputs/                        Generated artefacts
+└── outputs/                          Generated artefacts
     ├── training curves, confusion matrices, ROC curves
     ├── Grad-CAM visualisations
     ├── failure analysis plots
@@ -352,67 +398,12 @@ neurolens/
 
 ---
 
-## Reproduce locally
-
-### 1. Clone
-
-```bash
-git clone https://github.com/TheMEGALODON55681/NeuroLens.git
-cd NeuroLens
-```
-
-### 2. Install dependencies
-
-```bash
-python -m venv venv
-# Windows
-venv\Scripts\Activate.ps1
-# macOS / Linux
-source venv/bin/activate
-
-pip install -r requirements.txt
-```
-
-The project was developed on Google Colab with PyTorch 2.x, Python 3.12, and a Tesla T4 GPU. A GPU is recommended for training but **not required for inference**.
-
-### 3. Download the data
-
-The datasets are not bundled with this repository. Download them from the original sources:
-
-* **Figshare Brain Tumor Dataset** — Cheng et al., 2017:
-  [https://figshare.com/articles/dataset/brain_tumor_dataset/1512427](https://figshare.com/articles/dataset/brain_tumor_dataset/1512427)
-* **Br35H Brain Tumor Detection** (no-tumor class) — Ahmed Hamada, 2020:
-  [https://www.kaggle.com/datasets/ahmedhamada0/brain-tumor-detection](https://www.kaggle.com/datasets/ahmedhamada0/brain-tumor-detection)
-
-After downloading, place the raw files following the directory structure expected at the top of the training notebook.
-
-### 4. Train
-
-Open `notebooks/brain_tumor_full_pipeline.ipynb` and run the sections in order. The notebook covers acquisition, preprocessing, patient-level splitting, training, evaluation, and Grad-CAM generation. Processed data is regenerated at runtime rather than downloaded.
-
-### 5. Run the demo without training
-
-To skip training, download the pretrained checkpoint:
-
-* Download `stage2_best.pt` from the Hugging Face Space (Files tab):
-  [https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main](https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main)
-* Place it in the project root next to `app.py`.
-* Launch the local demo:
-
-  ```bash
-  python app.py
-  ```
-
-The Gradio interface will be available at `http://127.0.0.1:7860`.
-
----
-
 ## Acknowledgements
 
-* **Cheng et al. (2017)** — original Figshare brain tumor dataset (Cheng, Jun (2017). brain tumor dataset. figshare. Dataset).
+* **Cheng et al. (2017)** — the original Figshare brain tumor dataset (Cheng, Jun (2017). brain tumor dataset. figshare. Dataset).
 * **Br35H** — no-tumor MRI dataset by Ahmed Hamada (2020).
-* **Ross Wightman / `timm`** — PyTorch Image Models library providing the EfficientNet-B3 implementation and pretrained ImageNet weights.
-* **Jacob Gildenblat / `pytorch-grad-cam`** — implementation used for the attention overlays.
+* **Ross Wightman / `timm`** — the PyTorch Image Models library providing the EfficientNet-B3 implementation and pretrained ImageNet weights.
+* **Jacob Gildenblat / `pytorch-grad-cam`** — the implementation used for the attention overlays.
 
 ---
 
