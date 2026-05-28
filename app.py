@@ -10,7 +10,7 @@ Required files in the Space root:
 
 * ``app.py``                     — this file
 * ``stage2_best.pt``             — model checkpoint (~41 MB)
-* ``examples/`` (optional)       — folder of sample MRI images
+* ``examples/`` or ``samples/``  — folder of sample MRI images (optional)
 * ``requirements.txt``           — dependencies
 
 The app gracefully handles missing checkpoints and missing example folders,
@@ -50,7 +50,8 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
 CHECKPOINT_PATH = Path("stage2_best.pt")
-EXAMPLES_DIR = Path("examples")
+# Support either an "examples" or a "samples" folder (whichever exists).
+EXAMPLES_DIR = Path("examples") if Path("examples").exists() else Path("samples")
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"[NeuroLens] Active compute device: {DEVICE}")
@@ -212,15 +213,15 @@ below. Results appear instantly.
 
 **Under the hood:** EfficientNet-B3 trained with strict patient-level splitting
 to avoid the data leakage that inflates results in most public implementations.
-Test accuracy: **95.05% (TTA)** across 687 unseen patients · macro AUC **0.9965**.
+Test accuracy: **96.51%** across 687 unseen patients · macro AUC **0.9977**.
 """
 
 ARTICLE_MARKDOWN = """
 ### Why patient-level splitting matters
 
 Most public brain-tumor classifier notebooks report 96–99% accuracy on this
-dataset. **Those numbers are inflated by data leakage.** The Figshare source
-contains MRI slices from only 233 unique patients, with each patient
+dataset. **Many of those numbers are inflated by data leakage.** The Figshare
+source contains MRI slices from only 233 unique patients, with each patient
 contributing roughly 13 slices on average. Splitting at the *image* level
 puts multiple slices from the same patient in both the training and test sets,
 so the model memorises patient-specific anatomy rather than learning tumor
@@ -232,7 +233,7 @@ genuinely never seen.
 
 ### Known limitations
 
-* Meningioma recall is ~80% — this is the model's hardest class and is
+* Meningioma recall is ~85% — this is the model's hardest class and is
   flagged transparently in the project's failure analysis.
 * The model uses a single MRI modality (T1-weighted). Multi-modal inputs
   (T1, T2, FLAIR, T1ce) would likely improve meningioma vs glioma
@@ -249,7 +250,7 @@ Built with PyTorch · `timm` · `pytorch-grad-cam` · Gradio.
 # --------------------------------------------------------------------------- #
 
 def discover_examples() -> Optional[list[list[str]]]:
-    """Return a list of example image paths if the ``examples`` folder exists."""
+    """Return a list of example image paths if an examples/samples folder exists."""
     if not EXAMPLES_DIR.exists():
         return None
     candidates = sorted(
@@ -297,7 +298,7 @@ interface = gr.Interface(
     cache_examples=False,
     css=custom_css,
     theme=gr.themes.Soft(primary_hue="indigo", secondary_hue="cyan"),
-    allow_flagging="never",
+    flagging_mode="never",
 )
 
 
