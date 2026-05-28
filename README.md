@@ -12,8 +12,8 @@
   <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/pytorch-2.x-EE4C2C.svg?logo=pytorch&logoColor=white" alt="PyTorch 2.x">
   <img src="https://img.shields.io/badge/backbone-EfficientNet--B3-009688.svg" alt="EfficientNet-B3">
-  <img src="https://img.shields.io/badge/test%20accuracy-95.05%25-brightgreen.svg" alt="Test accuracy 95.05%">
-  <img src="https://img.shields.io/badge/macro%20AUC-0.9965-success.svg" alt="Macro AUC 0.9965">
+  <img src="https://img.shields.io/badge/test%20accuracy-96.51%25-brightgreen.svg" alt="Test accuracy 96.51%">
+  <img src="https://img.shields.io/badge/macro%20AUC-0.9977-success.svg" alt="Macro AUC 0.9977">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License">
 </p>
 
@@ -23,14 +23,14 @@
 
 | | |
 |---|---|
-| Test accuracy (TTA) | **95.05%** |
-| Test accuracy (single-pass) | 94.91% |
-| Macro AUC-ROC | **0.9965** |
-| Macro F1 | 0.9364 |
+| Test accuracy (TTA) | **96.51%** |
+| Test accuracy (single-pass) | 96.51% |
+| Macro AUC-ROC | **0.9977** |
+| Macro F1 | 0.9544 |
 | Test set | 687 patient-level held-out images |
 | Patient leakage between splits | **0** (verified by set intersection) |
 
-▶ **Live demo:** [Try NeuroLens on Hugging Face Spaces →](https://huggingface.co/spaces/Megalodon55681/NeuroLens) *(may take a moment to wake up — free Spaces sleep when idle)*
+▶ **Live demo:** [Try NeuroLens on Hugging Face Spaces →](https://huggingface.co/spaces/TheMEGALODON55681/NeuroLens) *(may take a moment to wake up — free Spaces sleep when idle)*
 
 ---
 
@@ -52,7 +52,7 @@ Train ∩ Test = 0 patients
 Val   ∩ Test = 0 patients
 ```
 
-The 95.05% accuracy reported here is the number that survives that discipline. It's lower than what the inflated notebooks claim. It's also the only one that means anything outside of a Kaggle scoreboard.
+The 96.51% accuracy reported here is the number that survives that discipline. It's lower than what the inflated notebooks claim. It's also the only one that means anything outside of a Kaggle scoreboard.
 
 ---
 
@@ -91,7 +91,7 @@ Resizing to 224 × 224 happens inside the DataLoader rather than during preproce
 ### Two-stage transfer learning
 
 **Stage 1 — Head training (5 epochs).**
-The backbone is frozen and only the classifier head trains. The head has roughly 6,148 parameters, so this stage is fast and stable. AdamW with learning rate 1e-3. Stage-1 validation accuracy reaches 81.74%.
+The backbone is frozen and only the classifier head trains. The head has roughly 6,148 parameters, so this stage is fast and stable. AdamW with learning rate 1e-3. Stage-1 validation accuracy reaches 81.58%.
 
 **Stage 2 — Full fine-tuning (17 epochs, early-stopped).**
 The entire network unfreezes. Differential learning rates apply different scales to the backbone (5e-5) and the head (1e-4) so the pretrained features aren't overwritten too aggressively. AdamW with weight decay 1e-4, cosine annealing schedule, gradient clipping at `max_norm=1.0`. Early stopping with patience 8 stops the run before overfitting takes hold. Stage-2 validation accuracy reaches 94.57%.
@@ -119,7 +119,7 @@ Weighted cross-entropy with inverse-frequency class weights. Meningioma — the 
 
 ### Test-time augmentation
 
-At inference, each test image is forwarded through the model five times with mild augmentations (rotation ±5°, brightness/contrast shifts) and the softmax probabilities are averaged before `argmax`. The contribution is small but consistent — **+0.14% accuracy** over the single-pass baseline.
+At inference, each test image is forwarded through the model five times with mild augmentations (rotation ±5°, brightness/contrast shifts) and the softmax probabilities are averaged before `argmax`. On this run TTA and the single-pass model produced the same headline accuracy (96.51%), with TTA giving marginally smoother per-class probabilities.
 
 ---
 
@@ -129,10 +129,10 @@ At inference, each test image is forwarded through the model five times with mil
 
 | Metric | Value |
 |---|---|
-| Test accuracy (TTA) | **95.05%** |
-| Test accuracy (single-pass) | 94.91% |
-| Macro AUC-ROC | **0.9965** |
-| Macro F1 | 0.9364 |
+| Test accuracy (TTA) | **96.51%** |
+| Test accuracy (single-pass) | 96.51% |
+| Macro AUC-ROC | **0.9977** |
+| Macro F1 | 0.9544 |
 | Test images | 687 (patient-level held-out) |
 
 ### Per-class performance
@@ -151,9 +151,9 @@ At inference, each test image is forwarded through the model five times with mil
 
 ### The honest weakness — meningioma
 
-Meningioma is the model's hardest class. Of 34 total test errors, **20 are meningioma misclassifications**, broken down as:
+Meningioma is the model's hardest class. Of 24 total test errors, **15 are meningioma misclassifications**, broken down as:
 
-* **Predicted as glioma (12 cases).** The most common confusion. Both tumor types can present as a hyperintense mass on T1-weighted MRI; without multi-modal input the visual cues genuinely overlap.
+* **Predicted as glioma (7 cases).** The most common confusion. Both tumor types can present as a hyperintense mass on T1-weighted MRI; without multi-modal input the visual cues genuinely overlap.
 * **Predicted as pituitary (8 cases).** These meningiomas were predominantly located in the lower-middle brain region — the same anatomical area where pituitary tumors occur. Tumor size varied across cases, ruling size out as the primary confounder; **location** appears to be the driving factor.
 
 A clinically reassuring observation: **the model never confused a meningioma for no-tumor.** The error mode is tumor *subtype* confusion, not tumor *presence*.
@@ -164,7 +164,7 @@ A clinically reassuring observation: **the model never confused a meningioma for
 
 ### High-confidence failures
 
-Ten of the 34 errors were made with >90% confidence — split exactly 5–5 between two confusion pairs:
+A subset of the 24 errors were made with >90% confidence, split between two confusion pairs:
 
 * 4 of 5 high-confidence meningioma errors → predicted as pituitary.
 * 4 of 5 high-confidence glioma errors → predicted as meningioma.
@@ -204,6 +204,12 @@ Grad-CAM (Gradient-weighted Class Activation Mapping) was applied across the ent
   <img src="outputs/gradcam_overview.png" alt="Grad-CAM overview" width="800"/>
 </p>
 
+The grid below shows Grad-CAM overlays on correctly-classified examples spanning all four classes. Red regions mark the pixels most responsible for the prediction:
+
+<p align="center">
+  <img src="outputs/gradcam/gradcam_correct_all_classes.png" alt="Grad-CAM on correct predictions across all classes" width="800"/>
+</p>
+
 ### Class-specific localisation patterns
 
 The localisation quality varies systematically by class:
@@ -221,6 +227,12 @@ Grad-CAM on misclassified cases exposed that the model fails in two fundamentall
 2. **Wrong attention, wrong class.** Some glioma → meningioma errors have heatmaps that don't cover the tumor at all — the model made a confident decision based on regions outside the lesion. This points to **distractor features or image-quality effects** — the fix is attention regularisation or input-quality screening.
 
 A single accuracy number flattens both of these into the same statistic. Grad-CAM separates them.
+
+The three-column view below makes this concrete for the high-confidence errors — the original slice, where the model looked to justify its (wrong) prediction, and where it should have looked for the true class:
+
+<p align="center">
+  <img src="outputs/gradcam/gradcam_high_confidence_failures.png" alt="Grad-CAM on high-confidence wrong predictions" width="800"/>
+</p>
 
 ---
 
@@ -247,6 +259,12 @@ NeuroLens combines two raw public sources rather than relying on a pre-aggregate
   <img src="outputs/class_distribution.png" alt="Class distribution" width="600"/>
 </p>
 
+Representative slices from each class (Figshare tumor classes at 512×512; Br35H no-tumor at native resolutions):
+
+<p align="center">
+  <img src="outputs/sample_images.png" alt="Sample MRI images from each class" width="800"/>
+</p>
+
 ### Why combine the sources manually
 
 Figshare provides three tumor types **with patient IDs** — the essential ingredient for patient-level splitting. Br35H provides healthy controls (no-tumor images) that Figshare doesn't include. Most aggregated datasets that combine these sources strip the patient IDs in the process, which silently makes proper splitting impossible. Combining the raw sources by hand was the only way to keep all four classes under a single, honest splitting methodology.
@@ -267,7 +285,7 @@ Many Figshare patients contribute 15–25 slices each. Without patient-level gro
 
 1. **Single MRI modality.** Only T1-weighted contrast-enhanced MRI was used. Clinical practice uses multiple modalities (T1, T2, FLAIR, T1ce) and the meningioma–glioma confusion that drives most of NeuroLens's errors is precisely the kind of error that multi-modal input typically resolves — different sequences highlight different tissue properties.
 
-2. **Meningioma class weakness.** The 19.6% error rate on meningioma is the dominant failure mode. Class-weighted loss addressed the *sample* imbalance partially, but the underlying constraint is the small number of unique meningioma *patients* in the dataset — a problem class-weighted loss cannot fix.
+2. **Meningioma class weakness.** The 14.7% error rate on meningioma is the dominant failure mode. Class-weighted loss addressed the *sample* imbalance partially, but the underlying constraint is the small number of unique meningioma *patients* in the dataset — a problem class-weighted loss cannot fix.
 
 3. **2D slice-based classification.** Each prediction operates on a single slice in isolation. Clinical radiologists interpret full 3D volumes; slice-based models necessarily miss spatial context that adjacent slices would provide.
 
@@ -336,7 +354,7 @@ Open `notebooks/brain_tumor_full_pipeline.ipynb` and run the sections in order. 
 To skip training, download the pretrained checkpoint:
 
 * Get `stage2_best.pt` from the Hugging Face Space (Files tab):
-  [https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main](https://huggingface.co/spaces/Megalodon55681/NeuroLens/tree/main)
+  [https://huggingface.co/spaces/TheMEGALODON55681/NeuroLens/tree/main](https://huggingface.co/spaces/TheMEGALODON55681/NeuroLens/tree/main)
 * Place it in the project root, next to `app.py`.
 * Launch:
 
