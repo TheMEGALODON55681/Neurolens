@@ -1,0 +1,2026 @@
+{
+  "nodes": [
+    {
+      "id": "src_init",
+      "label": "src/__init__.py",
+      "file_type": "code",
+      "source_file": "src/__init__.py",
+      "source_location": "L1",
+      "community": 0,
+      "description": "Package init; __version__='1.0.0'"
+    },
+    {
+      "id": "src_model",
+      "label": "src/model.py",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L1",
+      "community": 0,
+      "description": "EfficientNet-B3 backbone, checkpoint loading, Grad-CAM target layer"
+    },
+    {
+      "id": "src_dataset",
+      "label": "src/dataset.py",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L1",
+      "community": 0,
+      "description": "MRISliceDataset, label registry, torchvision transform factories"
+    },
+    {
+      "id": "src_inference",
+      "label": "src/inference.py",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L1",
+      "community": 0,
+      "description": "run_prediction() and render_attention_map() pure-function inference API"
+    },
+    {
+      "id": "app",
+      "label": "app.py",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L1",
+      "community": 1,
+      "description": "Self-contained Gradio app for Hugging Face Spaces deployment"
+    },
+    {
+      "id": "asset_ckpt",
+      "label": "stage2_best.pt",
+      "file_type": "concept",
+      "source_file": "stage2_best.pt",
+      "community": 1,
+      "description": "Trained EfficientNet-B3 weights, Stage 2 (~41 MB)"
+    },
+    {
+      "id": "notebook",
+      "label": "brain_tumor_full_pipeline.ipynb",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "source_location": "L1",
+      "community": 2,
+      "description": "End-to-end pipeline: data loading, two-stage fine-tuning, evaluation, Grad-CAM analysis"
+    },
+    {
+      "id": "requirements",
+      "label": "requirements.txt",
+      "file_type": "concept",
+      "source_file": "requirements.txt",
+      "source_location": "L1",
+      "community": 3,
+      "description": "Python deps: torch, torchvision, timm, grad-cam, gradio, pandas, sklearn, matplotlib, seaborn"
+    },
+    {
+      "id": "ci_workflow",
+      "label": "ci.yml",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "L1",
+      "community": 3,
+      "description": "GitHub Actions CI: py_compile on Python 3.10 and 3.11"
+    },
+    {
+      "id": "assets_logo",
+      "label": "assets/logo.svg",
+      "file_type": "image",
+      "source_file": "assets/logo.svg",
+      "source_location": "L1",
+      "community": 3,
+      "description": "Project logo"
+    },
+    {
+      "id": "samples_rm",
+      "label": "samples/README.md",
+      "file_type": "document",
+      "source_file": "samples/README.md",
+      "source_location": "L1",
+      "community": 3,
+      "description": "Describes sample MRI images for Gradio gallery"
+    },
+    {
+      "id": "dep_torch",
+      "label": "torch",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "PyTorch >=2.0; tensors, autograd, nn.Module, CUDA"
+    },
+    {
+      "id": "dep_tv",
+      "label": "torchvision",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "torchvision.transforms: Resize, CenterCrop, ToTensor, Normalize, RandomRotation, RandomAffine, ColorJitter"
+    },
+    {
+      "id": "dep_timm",
+      "label": "timm",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "timm.create_model('efficientnet_b3', ...)"
+    },
+    {
+      "id": "dep_gradcam",
+      "label": "pytorch_grad_cam",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "GradCAM, ClassifierOutputTarget, show_cam_on_image"
+    },
+    {
+      "id": "dep_gradio",
+      "label": "gradio",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "gr.Interface, gr.Image, gr.Label, gr.Markdown, gr.themes.Soft"
+    },
+    {
+      "id": "dep_pil",
+      "label": "Pillow",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "Image.open(), Image.fromarray(), .convert('RGB')"
+    },
+    {
+      "id": "dep_numpy",
+      "label": "numpy",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "np.argsort, np.zeros, np.ndarray"
+    },
+    {
+      "id": "dep_pandas",
+      "label": "pandas",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "pd.DataFrame manifest for MRISliceDataset"
+    },
+    {
+      "id": "dep_sklearn",
+      "label": "scikit-learn",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "Metrics, train/test split (notebook)"
+    },
+    {
+      "id": "dep_matplotlib",
+      "label": "matplotlib",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "Training curves, confusion matrix, ROC curves (notebook)"
+    },
+    {
+      "id": "dep_seaborn",
+      "label": "seaborn",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "Statistical visualisation (notebook)"
+    },
+    {
+      "id": "dep_dataset_base",
+      "label": "torch.utils.data.Dataset",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 4,
+      "description": "Base class for MRISliceDataset"
+    },
+    {
+      "id": "const_backbone",
+      "label": "BACKBONE_NAME",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L22",
+      "community": 0,
+      "description": "'efficientnet_b3'"
+    },
+    {
+      "id": "const_nclasses",
+      "label": "NUM_CLASSES",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L23",
+      "community": 0,
+      "description": "4 classes"
+    },
+    {
+      "id": "fn_create_cls",
+      "label": "create_classifier()",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L32",
+      "community": 0,
+      "description": "timm.create_model(BACKBONE_NAME, pretrained=pretrained, num_classes=NUM_CLASSES)"
+    },
+    {
+      "id": "fn_restore",
+      "label": "restore_from_checkpoint()",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L49",
+      "community": 0,
+      "description": "Load .pt state dict, place on device, eval mode"
+    },
+    {
+      "id": "fn_gradcam_tgt",
+      "label": "get_gradcam_target_layer()",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L69",
+      "community": 0,
+      "description": "Returns model.blocks[-1] for Grad-CAM"
+    },
+    {
+      "id": "type_pathlike",
+      "label": "PathLike",
+      "file_type": "code",
+      "source_file": "src/model.py",
+      "source_location": "L25",
+      "community": 0,
+      "description": "Union[str, Path]"
+    },
+    {
+      "id": "const_labels",
+      "label": "CLASS_LABELS",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L29",
+      "community": 0,
+      "description": "('glioma','meningioma','notumor','pituitary')"
+    },
+    {
+      "id": "const_l2i",
+      "label": "LABEL_TO_INDEX",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L31",
+      "community": 0,
+      "description": "label->int dict"
+    },
+    {
+      "id": "const_i2l",
+      "label": "INDEX_TO_LABEL",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L32",
+      "community": 0,
+      "description": "int->label dict"
+    },
+    {
+      "id": "const_res",
+      "label": "INPUT_RESOLUTION",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L38",
+      "community": 0,
+      "description": "224px final crop"
+    },
+    {
+      "id": "const_mean",
+      "label": "IMAGENET_MEAN",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L42",
+      "community": 0,
+      "description": "(0.485,0.456,0.406)"
+    },
+    {
+      "id": "const_std",
+      "label": "IMAGENET_STD",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L43",
+      "community": 0,
+      "description": "(0.229,0.224,0.225)"
+    },
+    {
+      "id": "cls_dataset",
+      "label": "MRISliceDataset",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L50",
+      "community": 0,
+      "description": "Dataset over preprocessed MRI slices; manifest DataFrame input"
+    },
+    {
+      "id": "fn_train_xf",
+      "label": "build_training_transform()",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L85",
+      "community": 0,
+      "description": "Resize->CenterCrop->RandomRotation(15deg)->RandomAffine->ColorJitter->ToTensor->Normalize"
+    },
+    {
+      "id": "fn_eval_xf",
+      "label": "build_evaluation_transform()",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L109",
+      "community": 0,
+      "description": "Resize->CenterCrop->ToTensor->Normalize; deterministic"
+    },
+    {
+      "id": "fn_vis_xf",
+      "label": "build_visualisation_transform()",
+      "file_type": "code",
+      "source_file": "src/dataset.py",
+      "source_location": "L121",
+      "community": 0,
+      "description": "Resize->CenterCrop->ToTensor; no normalise, for Grad-CAM overlay"
+    },
+    {
+      "id": "cls_pred_result",
+      "label": "PredictionResult",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L45",
+      "community": 0,
+      "description": "Frozen dataclass: predicted_label, confidence, probabilities, runner_up_label, runner_up_confidence"
+    },
+    {
+      "id": "fn_run_pred",
+      "label": "run_prediction()",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L59",
+      "community": 0,
+      "description": "Forward pass->softmax->argsort->PredictionResult; device-agnostic"
+    },
+    {
+      "id": "fn_render_attn",
+      "label": "render_attention_map()",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L103",
+      "community": 0,
+      "description": "Grad-CAM heatmap overlay; optional target_class"
+    },
+    {
+      "id": "var_eval_xf",
+      "label": "_EVAL_TRANSFORM",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L36",
+      "community": 0,
+      "description": "Module-level cached eval transform"
+    },
+    {
+      "id": "var_vis_xf",
+      "label": "_VIS_TRANSFORM",
+      "file_type": "code",
+      "source_file": "src/inference.py",
+      "source_location": "L37",
+      "community": 0,
+      "description": "Module-level cached vis transform"
+    },
+    {
+      "id": "fn_load_model",
+      "label": "load_model()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L64",
+      "community": 1,
+      "description": "Create EfficientNet-B3, load stage2_best.pt, eval mode"
+    },
+    {
+      "id": "fn_coerce_pil",
+      "label": "coerce_to_pil()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L109",
+      "community": 1,
+      "description": "Normalise Gradio input (numpy/PIL/RGBA/grayscale) to RGB PIL"
+    },
+    {
+      "id": "fn_conf_band",
+      "label": "confidence_band()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L120",
+      "community": 1,
+      "description": ">=0.90 High, >=0.70 Moderate, else Low confidence"
+    },
+    {
+      "id": "fn_empty_resp",
+      "label": "empty_response()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L129",
+      "community": 1,
+      "description": "Neutral placeholder when no image provided"
+    },
+    {
+      "id": "fn_classify",
+      "label": "classify()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L143",
+      "community": 1,
+      "description": "Gradio handler: coerce->transform->forward->GradCAM->format summary"
+    },
+    {
+      "id": "fn_discover",
+      "label": "discover_examples()",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L252",
+      "community": 1,
+      "description": "Scans examples/ or samples/ for PNG/JPG gallery images"
+    },
+    {
+      "id": "var_model",
+      "label": "MODEL",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L79",
+      "community": 1,
+      "description": "Global model loaded at startup"
+    },
+    {
+      "id": "var_cam",
+      "label": "CAM_ENGINE",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L80",
+      "community": 1,
+      "description": "GradCAM(MODEL, [MODEL.blocks[-1]])"
+    },
+    {
+      "id": "var_eval_app",
+      "label": "EVAL_TRANSFORM",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L87",
+      "community": 1,
+      "description": "Resize->CenterCrop->ToTensor->Normalize in classify()"
+    },
+    {
+      "id": "var_disp_app",
+      "label": "DISPLAY_TRANSFORM",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L96",
+      "community": 1,
+      "description": "Un-normalised transform for GradCAM overlay"
+    },
+    {
+      "id": "var_interface",
+      "label": "interface",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L279",
+      "community": 1,
+      "description": "gr.Interface(fn=classify, inputs=gr.Image, outputs=[gr.Label,gr.Image,gr.Markdown])"
+    },
+    {
+      "id": "const_ckpt_path",
+      "label": "CHECKPOINT_PATH",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L52",
+      "community": 1,
+      "description": "Path('stage2_best.pt')"
+    },
+    {
+      "id": "const_device",
+      "label": "DEVICE",
+      "file_type": "code",
+      "source_file": "app.py",
+      "source_location": "L56",
+      "community": 1,
+      "description": "cuda if available else cpu"
+    },
+    {
+      "id": "nb_eda",
+      "label": "Data Loading & EDA",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "Per-patient manifest, class/size distribution"
+    },
+    {
+      "id": "nb_split",
+      "label": "Patient-Level Splitting",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "train/val/test by patient ID; explicit overlap checks"
+    },
+    {
+      "id": "nb_stage1",
+      "label": "Stage 1 Fine-Tuning",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "Frozen backbone, head-only ~10 epochs"
+    },
+    {
+      "id": "nb_stage2",
+      "label": "Stage 2 Fine-Tuning",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "Full unfreeze, lower LR -> saves stage2_best.pt"
+    },
+    {
+      "id": "nb_eval",
+      "label": "Model Evaluation",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "96.51% acc, AUC 0.9977, confusion matrix, ROC, per-class metrics"
+    },
+    {
+      "id": "nb_gradcam",
+      "label": "Grad-CAM Visualisation",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "Overlays for correct preds and failure cases"
+    },
+    {
+      "id": "nb_failures",
+      "label": "Failure Analysis",
+      "file_type": "document",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "community": 2,
+      "description": "Meningioma recall ~85%; high-conf misclassifications"
+    },
+    {
+      "id": "c_4class",
+      "label": "4-Class Tumor Labels",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 0,
+      "description": "glioma(0), meningioma(1), notumor(2), pituitary(3)"
+    },
+    {
+      "id": "c_effnet",
+      "label": "EfficientNet-B3",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 0,
+      "description": "~10.7M params; compound depth/width/resolution scaling"
+    },
+    {
+      "id": "c_gradcam",
+      "label": "Grad-CAM",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 0,
+      "description": "Gradient-weighted Class Activation Mapping"
+    },
+    {
+      "id": "c_patientsplit",
+      "label": "Patient-Level Split",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 2,
+      "description": "Split by patient ID, not image, to prevent data leakage"
+    },
+    {
+      "id": "c_tta",
+      "label": "Test-Time Augmentation",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 2,
+      "description": "Multiple augmented passes averaged at inference"
+    },
+    {
+      "id": "c_imagenet_pt",
+      "label": "ImageNet Pretraining",
+      "file_type": "concept",
+      "source_file": "",
+      "community": 0,
+      "description": "Transfer learning from ImageNet-1K to brain MRI"
+    }
+  ],
+  "edges": [
+    {
+      "source": "src_model",
+      "target": "const_backbone",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "const_nclasses",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "fn_create_cls",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "fn_restore",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "fn_gradcam_tgt",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "type_pathlike",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_labels",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_l2i",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_i2l",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_res",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_mean",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "const_std",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "cls_dataset",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "fn_train_xf",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "fn_eval_xf",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_dataset",
+      "target": "fn_vis_xf",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_inference",
+      "target": "cls_pred_result",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_inference",
+      "target": "fn_run_pred",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_inference",
+      "target": "fn_render_attn",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_inference",
+      "target": "var_eval_xf",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_inference",
+      "target": "var_vis_xf",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_load_model",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_coerce_pil",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_conf_band",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_empty_resp",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_classify",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "fn_discover",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "var_model",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "var_cam",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "var_eval_app",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "var_disp_app",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "var_interface",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "const_ckpt_path",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "app",
+      "target": "const_device",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_eda",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_split",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_stage1",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_stage2",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_eval",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_gradcam",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "notebook",
+      "target": "nb_failures",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": ""
+    },
+    {
+      "source": "src_model",
+      "target": "dep_timm",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "import timm"
+    },
+    {
+      "source": "src_model",
+      "target": "dep_torch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "import torch; from torch import nn"
+    },
+    {
+      "source": "src_dataset",
+      "target": "dep_pandas",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "import pandas as pd"
+    },
+    {
+      "source": "src_dataset",
+      "target": "dep_torch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "import torch; from torch.utils.data import Dataset"
+    },
+    {
+      "source": "src_dataset",
+      "target": "dep_pil",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "from PIL import Image"
+    },
+    {
+      "source": "src_dataset",
+      "target": "dep_tv",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "from torchvision import transforms"
+    },
+    {
+      "source": "src_dataset",
+      "target": "dep_dataset_base",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "class MRISliceDataset(Dataset)"
+    },
+    {
+      "source": "src_inference",
+      "target": "dep_numpy",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "import numpy as np"
+    },
+    {
+      "source": "src_inference",
+      "target": "dep_torch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "import torch; F"
+    },
+    {
+      "source": "src_inference",
+      "target": "dep_pil",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "from PIL import Image"
+    },
+    {
+      "source": "src_inference",
+      "target": "dep_gradcam",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "from pytorch_grad_cam import GradCAM, show_cam_on_image, ClassifierOutputTarget"
+    },
+    {
+      "source": "src_inference",
+      "target": "src_dataset",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "from .dataset import CLASS_LABELS, INDEX_TO_LABEL, build_*_transform"
+    },
+    {
+      "source": "app",
+      "target": "dep_gradio",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "import gradio as gr"
+    },
+    {
+      "source": "app",
+      "target": "dep_numpy",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "import numpy as np"
+    },
+    {
+      "source": "app",
+      "target": "dep_torch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "import torch; F"
+    },
+    {
+      "source": "app",
+      "target": "dep_pil",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "from PIL import Image"
+    },
+    {
+      "source": "app",
+      "target": "dep_tv",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "from torchvision import transforms"
+    },
+    {
+      "source": "app",
+      "target": "dep_timm",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "import timm"
+    },
+    {
+      "source": "app",
+      "target": "dep_gradcam",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "from pytorch_grad_cam import GradCAM, show_cam_on_image, ClassifierOutputTarget"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_torch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import torch"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_tv",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import torchvision"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_timm",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import timm"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_gradcam",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import GradCAM"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_pandas",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import pandas as pd"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_sklearn",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "from sklearn..."
+    },
+    {
+      "source": "notebook",
+      "target": "dep_matplotlib",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import matplotlib"
+    },
+    {
+      "source": "notebook",
+      "target": "dep_seaborn",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 1.0,
+      "context": "import seaborn"
+    },
+    {
+      "source": "fn_restore",
+      "target": "fn_create_cls",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "create_classifier(pretrained=False)"
+    },
+    {
+      "source": "fn_create_cls",
+      "target": "dep_timm",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "timm.create_model(BACKBONE_NAME, num_classes=NUM_CLASSES)"
+    },
+    {
+      "source": "fn_restore",
+      "target": "dep_torch",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "torch.load(checkpoint_path, map_location=device)"
+    },
+    {
+      "source": "fn_create_cls",
+      "target": "const_backbone",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "BACKBONE_NAME='efficientnet_b3'"
+    },
+    {
+      "source": "fn_create_cls",
+      "target": "const_nclasses",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "num_classes=NUM_CLASSES"
+    },
+    {
+      "source": "fn_gradcam_tgt",
+      "target": "c_effnet",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/model.py",
+      "weight": 1.0,
+      "context": "model.blocks[-1] of EfficientNet-B3"
+    },
+    {
+      "source": "cls_dataset",
+      "target": "dep_pil",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "Image.open(row['processed_path']).convert('RGB')"
+    },
+    {
+      "source": "cls_dataset",
+      "target": "const_l2i",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "LABEL_TO_INDEX[row['label']]"
+    },
+    {
+      "source": "cls_dataset",
+      "target": "dep_dataset_base",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "class MRISliceDataset(Dataset)"
+    },
+    {
+      "source": "fn_train_xf",
+      "target": "dep_tv",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "transforms.Compose([Resize,CenterCrop,RandomRotation,RandomAffine,ColorJitter,ToTensor,Normalize])"
+    },
+    {
+      "source": "fn_eval_xf",
+      "target": "dep_tv",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "transforms.Compose([Resize,CenterCrop,ToTensor,Normalize])"
+    },
+    {
+      "source": "fn_vis_xf",
+      "target": "dep_tv",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "transforms.Compose([Resize,CenterCrop,ToTensor])"
+    },
+    {
+      "source": "fn_train_xf",
+      "target": "const_mean",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "IMAGENET_MEAN in Normalize"
+    },
+    {
+      "source": "fn_train_xf",
+      "target": "const_std",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "IMAGENET_STD in Normalize"
+    },
+    {
+      "source": "fn_eval_xf",
+      "target": "const_mean",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "IMAGENET_MEAN in Normalize"
+    },
+    {
+      "source": "fn_eval_xf",
+      "target": "const_std",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/dataset.py",
+      "weight": 1.0,
+      "context": "IMAGENET_STD in Normalize"
+    },
+    {
+      "source": "var_eval_xf",
+      "target": "fn_eval_xf",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "_EVAL_TRANSFORM = build_evaluation_transform() at import"
+    },
+    {
+      "source": "var_vis_xf",
+      "target": "fn_vis_xf",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "_VIS_TRANSFORM = build_visualisation_transform() at import"
+    },
+    {
+      "source": "fn_run_pred",
+      "target": "dep_torch",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "torch.no_grad(); F.softmax(logits, dim=1)"
+    },
+    {
+      "source": "fn_run_pred",
+      "target": "dep_numpy",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "np.argsort(probabilities)[::-1]"
+    },
+    {
+      "source": "fn_run_pred",
+      "target": "cls_pred_result",
+      "relation": "returns",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "returns PredictionResult(...)"
+    },
+    {
+      "source": "fn_run_pred",
+      "target": "const_labels",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "len(CLASS_LABELS) for prob dict"
+    },
+    {
+      "source": "fn_run_pred",
+      "target": "const_i2l",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "INDEX_TO_LABEL[top_index]"
+    },
+    {
+      "source": "fn_render_attn",
+      "target": "dep_gradcam",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "GradCAM(model,target_layers=[target_layer])"
+    },
+    {
+      "source": "fn_render_attn",
+      "target": "dep_torch",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "torch.no_grad(); logits.argmax()"
+    },
+    {
+      "source": "fn_render_attn",
+      "target": "dep_numpy",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "src/inference.py",
+      "weight": 1.0,
+      "context": "rgb_image = _VIS_TRANSFORM(...).permute(1,2,0).numpy()"
+    },
+    {
+      "source": "fn_load_model",
+      "target": "dep_timm",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "timm.create_model('efficientnet_b3', pretrained=False)"
+    },
+    {
+      "source": "fn_load_model",
+      "target": "dep_torch",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "torch.load(CHECKPOINT_PATH, map_location=DEVICE)"
+    },
+    {
+      "source": "fn_load_model",
+      "target": "asset_ckpt",
+      "relation": "reads",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "loads stage2_best.pt"
+    },
+    {
+      "source": "fn_load_model",
+      "target": "const_ckpt_path",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "CHECKPOINT_PATH"
+    },
+    {
+      "source": "fn_load_model",
+      "target": "const_device",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "model.to(DEVICE).eval()"
+    },
+    {
+      "source": "var_model",
+      "target": "fn_load_model",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "MODEL = load_model() at startup"
+    },
+    {
+      "source": "var_cam",
+      "target": "dep_gradcam",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "GradCAM(model=MODEL, target_layers=[MODEL.blocks[-1]])"
+    },
+    {
+      "source": "fn_classify",
+      "target": "fn_coerce_pil",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "pil_image = coerce_to_pil(input_image)"
+    },
+    {
+      "source": "fn_classify",
+      "target": "fn_conf_band",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "confidence_band(confidence)"
+    },
+    {
+      "source": "fn_classify",
+      "target": "fn_empty_resp",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "empty_response() when input_image is None"
+    },
+    {
+      "source": "fn_classify",
+      "target": "var_cam",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "CAM_ENGINE(input_tensor, targets)"
+    },
+    {
+      "source": "fn_classify",
+      "target": "var_model",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "MODEL(input_tensor)"
+    },
+    {
+      "source": "fn_classify",
+      "target": "dep_numpy",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "np.argsort(probabilities)[::-1]"
+    },
+    {
+      "source": "fn_classify",
+      "target": "dep_torch",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "torch.no_grad(); F.softmax()"
+    },
+    {
+      "source": "fn_coerce_pil",
+      "target": "dep_pil",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "Image.fromarray(image).convert('RGB')"
+    },
+    {
+      "source": "fn_coerce_pil",
+      "target": "dep_numpy",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "isinstance(image, np.ndarray)"
+    },
+    {
+      "source": "var_interface",
+      "target": "fn_classify",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "gr.Interface(fn=classify)"
+    },
+    {
+      "source": "var_interface",
+      "target": "fn_discover",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "examples=discover_examples()"
+    },
+    {
+      "source": "var_interface",
+      "target": "dep_gradio",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app.py",
+      "weight": 1.0,
+      "context": "gr.Interface, gr.Image, gr.Label, gr.Markdown, gr.themes.Soft"
+    },
+    {
+      "source": "nb_stage2",
+      "target": "asset_ckpt",
+      "relation": "produces",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "saves stage2_best.pt at best val accuracy"
+    },
+    {
+      "source": "nb_eda",
+      "target": "c_4class",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "loads glioma/meningioma/notumor/pituitary"
+    },
+    {
+      "source": "nb_split",
+      "target": "c_patientsplit",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "patient-level train/val/test split"
+    },
+    {
+      "source": "nb_stage1",
+      "target": "c_effnet",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "EfficientNet-B3 head-only training"
+    },
+    {
+      "source": "nb_stage2",
+      "target": "c_effnet",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "full backbone unfreeze"
+    },
+    {
+      "source": "nb_gradcam",
+      "target": "c_gradcam",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "Grad-CAM overlays"
+    },
+    {
+      "source": "nb_eval",
+      "target": "c_tta",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "TTA evaluation"
+    },
+    {
+      "source": "notebook",
+      "target": "src_model",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "mirrors create_classifier/restore_from_checkpoint"
+    },
+    {
+      "source": "notebook",
+      "target": "src_dataset",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "imports MRISliceDataset and transform factories"
+    },
+    {
+      "source": "notebook",
+      "target": "src_inference",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "notebooks/brain_tumor_full_pipeline.ipynb",
+      "weight": 0.9,
+      "context": "imports run_prediction, render_attention_map"
+    },
+    {
+      "source": "c_effnet",
+      "target": "dep_timm",
+      "relation": "loaded_via",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "timm.create_model('efficientnet_b3')"
+    },
+    {
+      "source": "c_gradcam",
+      "target": "dep_gradcam",
+      "relation": "implemented_by",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "pytorch_grad_cam library"
+    },
+    {
+      "source": "c_imagenet_pt",
+      "target": "c_effnet",
+      "relation": "applied_to",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "backbone pretrained on ImageNet-1K"
+    },
+    {
+      "source": "c_imagenet_pt",
+      "target": "const_mean",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "channel-wise mean normalisation"
+    },
+    {
+      "source": "c_imagenet_pt",
+      "target": "const_std",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "channel-wise std normalisation"
+    },
+    {
+      "source": "c_4class",
+      "target": "const_labels",
+      "relation": "defined_in",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "CLASS_LABELS in dataset.py"
+    },
+    {
+      "source": "fn_gradcam_tgt",
+      "target": "c_gradcam",
+      "relation": "supports",
+      "confidence": "INFERRED",
+      "source_file": "src/model.py",
+      "weight": 0.85,
+      "context": "provides target layer"
+    },
+    {
+      "source": "fn_render_attn",
+      "target": "c_gradcam",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "source_file": "src/inference.py",
+      "weight": 0.85,
+      "context": "single-image Grad-CAM overlay"
+    },
+    {
+      "source": "var_cam",
+      "target": "c_gradcam",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.85,
+      "context": "app-level Grad-CAM engine"
+    },
+    {
+      "source": "c_patientsplit",
+      "target": "nb_split",
+      "relation": "documented_in",
+      "confidence": "INFERRED",
+      "source_file": "",
+      "weight": 0.85,
+      "context": "notebook patient split section"
+    },
+    {
+      "source": "app",
+      "target": "const_labels",
+      "relation": "duplicates",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.8,
+      "context": "re-defined in app.py; could import from src.dataset"
+    },
+    {
+      "source": "app",
+      "target": "const_nclasses",
+      "relation": "duplicates",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.8,
+      "context": "re-defined in app.py; could import from src.dataset"
+    },
+    {
+      "source": "app",
+      "target": "const_mean",
+      "relation": "duplicates",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.8,
+      "context": "re-defined in app.py; could import from src.dataset"
+    },
+    {
+      "source": "app",
+      "target": "const_std",
+      "relation": "duplicates",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.8,
+      "context": "re-defined in app.py; could import from src.dataset"
+    },
+    {
+      "source": "app",
+      "target": "const_res",
+      "relation": "duplicates",
+      "confidence": "INFERRED",
+      "source_file": "app.py",
+      "weight": 0.8,
+      "context": "re-defined in app.py; could import from src.dataset"
+    },
+    {
+      "source": "src_inference",
+      "target": "app",
+      "relation": "related",
+      "confidence": "INFERRED",
+      "source_file": "src/inference.py",
+      "weight": 0.75,
+      "context": "render_attention_map mirrors classify GradCAM logic; app.py does not import src.inference"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "src_model",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "py_compile src/model.py on 3.10 & 3.11"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "src_dataset",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "py_compile src/dataset.py on 3.10 & 3.11"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "src_inference",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "py_compile src/inference.py on 3.10 & 3.11"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "src_init",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "py_compile src/__init__.py on 3.10 & 3.11"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "app",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "py_compile app.py on 3.10 & 3.11"
+    },
+    {
+      "source": "ci_workflow",
+      "target": "requirements",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/workflows/ci.yml",
+      "weight": 1.0,
+      "context": "parse requirements.txt line by line"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_torch",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_torch"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_tv",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_tv"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_timm",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_timm"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_gradcam",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_gradcam"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_gradio",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_gradio"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_pil",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_pil"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_numpy",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_numpy"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_pandas",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_pandas"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_sklearn",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_sklearn"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_matplotlib",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_matplotlib"
+    },
+    {
+      "source": "requirements",
+      "target": "dep_seaborn",
+      "relation": "pins",
+      "confidence": "EXTRACTED",
+      "source_file": "requirements.txt",
+      "weight": 1.0,
+      "context": "requirements.txt specifies dep_seaborn"
+    }
+  ],
+  "directed": false,
+  "community_labels": {
+    "0": "Core ML Library",
+    "1": "Gradio Web Application",
+    "2": "Training & Experimentation",
+    "3": "Infrastructure & DevOps",
+    "4": "External Dependencies"
+  },
+  "project": "NeuroLens",
+  "description": "Brain MRI tumor classifier — EfficientNet-B3 + patient-level splitting + Gradio/HuggingFace Spaces",
+  "input_tokens": 0,
+  "output_tokens": 0
+}

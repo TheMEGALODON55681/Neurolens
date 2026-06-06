@@ -331,6 +331,34 @@ Planned improvements under exploration for the next iteration:
 
 ---
 
+## 📊 Architecture & Knowledge Graph
+
+This project includes a generated **knowledge graph** mapping all components, functions, utilities, and design decisions across the codebase.
+
+**Graph Stats:**
+- **70 nodes** · **155 edges** · **5 communities**
+
+### Explore the Architecture
+
+- **Interactive 3D Graph:** [`docs/architecture/graph.html`](docs/architecture/graph.html) — open locally to zoom, pan, and click nodes
+- **Full Report:** [`docs/architecture/GRAPH_REPORT.md`](docs/architecture/GRAPH_REPORT.md) — communities, cohesion metrics, refactoring suggestions
+- **Raw Graph Data:** [`docs/architecture/graph.json`](docs/architecture/graph.json) — structured data for programmatic use
+
+### Why This Matters
+
+The knowledge graph lets you (or anyone onboarding):
+
+- **Understand architecture instantly** — no need to read all files
+- **Spot design flaws** — identifies isolated components, weak cohesion areas
+- **Find integration points** — shows which nodes bridge communities (high-impact when changed)
+- **Plan refactors** — community cohesion scores suggest where to split modules
+
+### Generated With
+
+[graphify](https://github.com/slang-ai/graphify) + Claude subagents for semantic extraction
+
+---
+
 ## Reproduce locally
 
 ### 1. Clone
@@ -420,40 +448,4 @@ neurolens/
 │   ├── dataset.py                    Dataset class and image transforms
 │   └── inference.py                  Prediction and Grad-CAM utilities
 │
-├── notebooks/
-│   └── brain_tumor_full_pipeline.ipynb   End-to-end training notebook
-│
-├── samples/
-│   └── README.md                     Curated example images for the demo
-│
-└── outputs/                          Generated artefacts
-    ├── training curves, confusion matrices, ROC curves
-    ├── Grad-CAM visualisations
-    ├── failure analysis plots
-    ├── per_class_metrics.csv, evaluation_summary.txt
-    └── screenshots/
-```
-
----
-
-## Acknowledgements
-
-* **Cheng et al. (2017)** — the original Figshare brain tumor dataset (Cheng, Jun (2017). brain tumor dataset. figshare. Dataset).
-* **Br35H** — no-tumor MRI dataset by Ahmed Hamada (2020).
-* **Ross Wightman / `timm`** — the PyTorch Image Models library providing the EfficientNet-B3 implementation and pretrained ImageNet weights.
-* **Jacob Gildenblat / `pytorch-grad-cam`** — the implementation used for the attention overlays.
-
----
-
-## Contact
-
-**Aryan Sharma**
-
-* GitHub: [@TheMEGALODON55681](https://github.com/TheMEGALODON55681)
-* Email: [aryansharma10011@gmail.com](mailto:aryansharma10011@gmail.com)
-
----
-
-## License
-
-Released under the MIT License. See [LICENSE](LICENSE) for full text.
+├─�
